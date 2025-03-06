@@ -7,8 +7,8 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float jumpForce = 10f;
-    [SerializeField] private float wallSlideSpeed = 2f;
-    [SerializeField] private float wallStickGravity = 0f;
+    [SerializeField] private float wallSlideSpeed = 10f;
+    [SerializeField] private float wallStickGravity = 0.5f;
     [SerializeField] private float wallSpeed = 3f;
     public Transform wallCheck;
     public Transform groundCheck;
@@ -70,15 +70,15 @@ public class PlayerController : MonoBehaviour
         rb.velocity = new Vector2 (movement *moveSpeed,rb.velocity.y);
         if (isWallSticking) 
         { 
-            if(verticalInput == 0) 
+            if(rb.velocity.y == 0) 
             { 
-            rb.velocity = new Vector2(rb.velocity.x, -wallStickGravity);
-            rb.gravityScale= wallStickGravity;
+            rb.velocity = new Vector2(rb.velocity.y, -wallSlideSpeed);
             }
             else
             {
                 rb.velocity = new Vector2(rb.velocity.x, verticalInput * wallSpeed);
             }
+            Debug.Log("Velocity X: " + rb.velocity.x);
         }
         else
         {
