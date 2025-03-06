@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     public Transform groundCheck;
     public LayerMask wallLayer;
     public LayerMask groundLayer;
+    public Color buffColor;
     private float movement;
     private Rigidbody2D rb;
     private bool isGrounded = false;
@@ -21,11 +22,16 @@ public class PlayerController : MonoBehaviour
     private bool isWallSticking;
     private float verticalInput;
     private float originalJumpForce;
+    private SpriteRenderer sr;
+    private Color originalColor;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        sr = GetComponent<SpriteRenderer>();
+        originalColor = sr.color;
         originalJumpForce = jumpForce;
+        
     }
     
     private void Update()
@@ -50,14 +56,42 @@ public class PlayerController : MonoBehaviour
             other.gameObject.SetActive(false);
             StartCoroutine(Respawn(other.gameObject, 10f));
         }
+        if (other.CompareTag("StickBuff"))
+        {
+            StartCoroutine(ApplyStiky(5f));
+            other.gameObject.SetActive(false);
+            StartCoroutine(Respawn(other.gameObject, 10f));
+        }
     }
     IEnumerator ApplyJumpBoost(float duration,float boost)
     {
         jumpForce = boost;
-        Debug.Log(jumpForce);
+        buffColor = Color.green;
+        sr.color = buffColor;
         yield return new WaitForSeconds(duration);
-        Debug.Log(jumpForce);
+        sr.color = originalColor;
         jumpForce = originalJumpForce;
+    }
+    IEnumerator ApplyStiky(float duration)
+    {
+        if (isWallSticking)
+        {
+            if (rb.velocity.y == 0)
+            {
+                rb.velocity = new Vector2(rb.velocity.y, -wallSlideSpeed);
+            }
+            else
+            {
+                rb.velocity = new Vector2(rb.velocity.x, verticalInput * wallSpeed);
+            }
+            Debug.Log("Velocity X: " + rb.velocity.x);
+            yield return new WaitForSeconds(duration);
+        }
+        else
+        {
+            rb.gravityScale = 1;
+        }
+
     }
     IEnumerator Respawn(GameObject buff,float respawnTime)
     {
@@ -68,22 +102,7 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         rb.velocity = new Vector2 (movement *moveSpeed,rb.velocity.y);
-        if (isWallSticking) 
-        { 
-            if(rb.velocity.y == 0) 
-            { 
-            rb.velocity = new Vector2(rb.velocity.y, -wallSlideSpeed);
-            }
-            else
-            {
-                rb.velocity = new Vector2(rb.velocity.x, verticalInput * wallSpeed);
-            }
-            Debug.Log("Velocity X: " + rb.velocity.x);
-        }
-        else
-        {
-            rb.gravityScale = 1;
-        }
+        
     }
 
 }
