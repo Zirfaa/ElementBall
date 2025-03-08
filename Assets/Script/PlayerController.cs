@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using NUnit.Framework.Constraints;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.WSA;
 
@@ -15,6 +17,8 @@ public class PlayerController : MonoBehaviour
     public LayerMask wallLayer;
     public LayerMask groundLayer;
     public Color buffColor;
+    public GameObject bounceBall;
+    public GameObject normal;
     private float movement;
     private Rigidbody2D rb;
     private bool isGrounded = false;
@@ -24,6 +28,7 @@ public class PlayerController : MonoBehaviour
     private float originalJumpForce;
     private SpriteRenderer sr;
     private Color originalColor;
+    private GameObject currentPlayer;
 
     private void Awake()
     {
@@ -31,7 +36,7 @@ public class PlayerController : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
         originalColor = sr.color;
         originalJumpForce = jumpForce;
-        
+        currentPlayer = gameObject;
     }
     
     private void Update()
@@ -60,6 +65,12 @@ public class PlayerController : MonoBehaviour
         {
             StartCoroutine(ApplyStiky(5f));
             other.gameObject.SetActive(false);
+            StartCoroutine(Respawn(other.gameObject, 10f));
+        }
+        if(other.CompareTag("Bounce"))
+        {
+            other.gameObject.SetActive(false);
+            StartCoroutine(ApplyBounce(10f));
             StartCoroutine(Respawn(other.gameObject, 10f));
         }
     }
@@ -91,6 +102,26 @@ public class PlayerController : MonoBehaviour
         {
             rb.gravityScale = 1;
         }
+
+    }
+    IEnumerator ApplyBounce(float duration)
+    {
+        
+        Vector3 position = currentPlayer.transform.position;
+        Quaternion rotation = currentPlayer.transform.rotation;
+        Rigidbody2D oldRb = currentPlayer.GetComponent<Rigidbody2D>();
+        GameObject newPlayer = Instantiate(bounceBall, position, rotation);
+        newPlayer.GetComponent<Rigidbody2D>().velocity = oldRb.velocity;
+        Destroy(currentPlayer);
+        currentPlayer = newPlayer;
+        yield return new WaitForSeconds(duration);
+        position = newPlayer.transform.position;
+        rotation = newPlayer.transform.rotation;
+        oldRb = currentPlayer.GetComponent<Rigidbody2D>();
+        GameObject originalPlayer = Instantiate(normal, position, rotation);
+        originalColor = originalPlayer.GetComponent<Color>();
+        Destroy(currentPlayer);
+        currentPlayer = originalPlayer;
 
     }
     IEnumerator Respawn(GameObject buff,float respawnTime)

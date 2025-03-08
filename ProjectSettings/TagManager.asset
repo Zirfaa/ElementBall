@@ -7,6 +7,7 @@ TagManager:
   - Ground
   - BuffJump
   - StickBuff
+  - Bounce
   layers:
   - Default
   - TransparentFX
