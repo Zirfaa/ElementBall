@@ -49,7 +49,7 @@ public class PlayerController : MonoBehaviour
         {
             if (isWallSticking)
             {
-                if (rb.velocity.y == 0)
+                if (!isGrounded && isOnWall)
                 {
                     rb.velocity = new Vector2(rb.velocity.y, -wallSlideSpeed);
                 }
