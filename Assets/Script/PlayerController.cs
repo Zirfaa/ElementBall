@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
     public Color buffColor;
     public GameObject bounceBall;
     public GameObject normal;
+    public bool isBuff;
     private float movement;
     private Rigidbody2D rb;
     private bool isGrounded = false;
@@ -41,9 +42,28 @@ public class PlayerController : MonoBehaviour
     
     private void Update()
         {
-            isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.5f, groundLayer |wallLayer);
-            isOnWall = Physics2D.OverlapCircle(wallCheck.position, 0.6f, wallLayer);
-            isWallSticking = isOnWall && Input.GetMouseButton(0);
+        isOnWall = Physics2D.OverlapCircle(wallCheck.position, 0.6f, wallLayer);
+        isWallSticking = isOnWall && Input.GetMouseButton(0);
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.5f, groundLayer |wallLayer);
+        if (isBuff)
+        {
+            if (isWallSticking)
+            {
+                if (rb.velocity.y == 0)
+                {
+                    rb.velocity = new Vector2(rb.velocity.y, -wallSlideSpeed);
+                }
+                else
+                {
+                    rb.velocity = new Vector2(rb.velocity.x, verticalInput * wallSpeed);
+                }
+
+            }
+            else
+            {
+                rb.gravityScale = 1;
+            }
+        }
         if (Input.GetButtonDown("Jump") && isGrounded)
             {
                 rb.velocity = new Vector2(rb.velocity.x, jumpForce);
@@ -85,23 +105,12 @@ public class PlayerController : MonoBehaviour
     }
     IEnumerator ApplyStiky(float duration)
     {
-        if (isWallSticking)
-        {
-            if (rb.velocity.y == 0)
-            {
-                rb.velocity = new Vector2(rb.velocity.y, -wallSlideSpeed);
-            }
-            else
-            {
-                rb.velocity = new Vector2(rb.velocity.x, verticalInput * wallSpeed);
-            }
-            Debug.Log("Velocity X: " + rb.velocity.x);
-            yield return new WaitForSeconds(duration);
-        }
-        else
-        {
-            rb.gravityScale = 1;
-        }
+        isBuff = true;
+        
+        
+        Debug.Log("nempel tembok :" + isOnWall);
+        Debug.Log("nempel: " + isWallSticking);
+        yield return new WaitForSeconds(duration);
 
     }
     IEnumerator ApplyBounce(float duration)

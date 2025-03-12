@@ -164,8 +164,8 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 1
-  m_Constraints: 4
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!212 &356365200
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -265,6 +265,7 @@ MonoBehaviour:
   buffColor: {r: 0, g: 0, b: 0, a: 0}
   bounceBall: {fileID: 8241607466961970073, guid: 38aaaad7fb8bb8341a21f94f125ba740, type: 3}
   normal: {fileID: 356365198}
+  isBuff: 0
 --- !u!70 &356365204
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -742,7 +743,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.667961, g: 1, b: 0.020754695, a: 1}
+  m_Color: {r: 0.6666667, g: 1, b: 0.019607844, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1181,7 +1182,7 @@ Transform:
   m_GameObject: {fileID: 1239424418}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.012, z: 0}
   m_LocalScale: {x: 0, y: -0, z: -0}
   m_ConstrainProportionsScale: 1
   m_Children: []
