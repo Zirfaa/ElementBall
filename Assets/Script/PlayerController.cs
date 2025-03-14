@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpForce = 10f;
     [SerializeField] private float wallSlideSpeed = 10f;
     [SerializeField] private float wallStickGravity = 0.5f;
-    [SerializeField] private float wallSpeed = 3f;
+    [SerializeField] private float wallSpeed = 5f;
     public Transform wallCheck;
     public Transform groundCheck;
     public LayerMask wallLayer;
@@ -42,8 +42,8 @@ public class PlayerController : MonoBehaviour
     
     private void Update()
         {
-        isOnWall = Physics2D.OverlapCircle(wallCheck.position, 0.6f, wallLayer);
-        isWallSticking = isOnWall && Input.GetMouseButton(0);
+        isOnWall = Physics2D.OverlapCircle(wallCheck.position, 1f, wallLayer);
+        isWallSticking = isOnWall;
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.5f, groundLayer |wallLayer);
         if (isBuff)
         {
@@ -53,9 +53,9 @@ public class PlayerController : MonoBehaviour
                 {
                     rb.velocity = new Vector2(rb.velocity.y, -wallSlideSpeed);
                 }
-                else
+                else if(isOnWall)
                 {
-                    rb.velocity = new Vector2(rb.velocity.x, verticalInput * wallSpeed);
+                    rb.velocity = new Vector2(rb.velocity.x, verticalInput* wallSpeed);
                 }
 
             }
@@ -70,6 +70,7 @@ public class PlayerController : MonoBehaviour
             }
         movement = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
+        
         
         }
     private void OnTriggerEnter2D(Collider2D other)
@@ -106,11 +107,10 @@ public class PlayerController : MonoBehaviour
     IEnumerator ApplyStiky(float duration)
     {
         isBuff = true;
-        
-        
         Debug.Log("nempel tembok :" + isOnWall);
         Debug.Log("nempel: " + isWallSticking);
         yield return new WaitForSeconds(duration);
+        isBuff = false;
 
     }
     IEnumerator ApplyBounce(float duration)
