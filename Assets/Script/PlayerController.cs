@@ -42,14 +42,14 @@ public class PlayerController : MonoBehaviour
     
     private void Update()
         {
-        isOnWall = Physics2D.OverlapCircle(wallCheck.position, 1f, wallLayer);
+        isOnWall = Physics2D.OverlapCircle(wallCheck.position, 0.5f, wallLayer);
         isWallSticking = isOnWall;
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.5f, groundLayer |wallLayer);
         if (isBuff)
         {
             if (isWallSticking)
             {
-                if (!isGrounded && isOnWall)
+                if (rb.velocity.x == 0)
                 {
                     rb.velocity = new Vector2(rb.velocity.y, -wallSlideSpeed);
                 }
@@ -107,9 +107,10 @@ public class PlayerController : MonoBehaviour
     IEnumerator ApplyStiky(float duration)
     {
         isBuff = true;
-        Debug.Log("nempel tembok :" + isOnWall);
-        Debug.Log("nempel: " + isWallSticking);
+        buffColor = Color.cyan;
+        sr.color = buffColor;
         yield return new WaitForSeconds(duration);
+        sr.color = originalColor;
         isBuff = false;
 
     }
