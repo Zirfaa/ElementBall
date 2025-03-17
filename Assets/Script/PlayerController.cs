@@ -42,7 +42,7 @@ public class PlayerController : MonoBehaviour
     
     private void Update()
         {
-        isOnWall = Physics2D.OverlapCircle(wallCheck.position, 0.5f, wallLayer);
+        isOnWall = Physics2D.OverlapCircle(wallCheck.position, 0.7f, wallLayer);
         isWallSticking = isOnWall;
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.5f, groundLayer |wallLayer);
         if (isBuff)
