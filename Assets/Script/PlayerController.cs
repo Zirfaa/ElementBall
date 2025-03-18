@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpForce = 10f;
     [SerializeField] private float wallSlideSpeed = 10f;
     [SerializeField] private float wallStickGravity = 0.5f;
-    [SerializeField] private float wallSpeed = 3f;
+    [SerializeField] private float wallSpeed = 5f;
     public Transform wallCheck;
     public Transform groundCheck;
     public LayerMask wallLayer;
@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
     public Color buffColor;
     public GameObject bounceBall;
     public GameObject normal;
+    public bool isBuff;
     private float movement;
     private Rigidbody2D rb;
     private bool isGrounded = false;
@@ -41,15 +42,35 @@ public class PlayerController : MonoBehaviour
     
     private void Update()
         {
-            isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.5f, groundLayer |wallLayer);
-            isOnWall = Physics2D.OverlapCircle(wallCheck.position, 0.6f, wallLayer);
-            isWallSticking = isOnWall && Input.GetMouseButton(0);
+        isOnWall = Physics2D.OverlapCircle(wallCheck.position, 0.7f, wallLayer);
+        isWallSticking = isOnWall;
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.5f, groundLayer |wallLayer);
+        if (isBuff)
+        {
+            if (isWallSticking)
+            {
+                if (rb.velocity.x == 0)
+                {
+                    rb.velocity = new Vector2(rb.velocity.y, -wallSlideSpeed);
+                }
+                else if(isOnWall)
+                {
+                    rb.velocity = new Vector2(rb.velocity.x, verticalInput* wallSpeed);
+                }
+
+            }
+            else
+            {
+                rb.gravityScale = 1;
+            }
+        }
         if (Input.GetButtonDown("Jump") && isGrounded)
             {
                 rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             }
         movement = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
+        
         
         }
     private void OnTriggerEnter2D(Collider2D other)
@@ -85,23 +106,12 @@ public class PlayerController : MonoBehaviour
     }
     IEnumerator ApplyStiky(float duration)
     {
-        if (isWallSticking)
-        {
-            if (rb.velocity.y == 0)
-            {
-                rb.velocity = new Vector2(rb.velocity.y, -wallSlideSpeed);
-            }
-            else
-            {
-                rb.velocity = new Vector2(rb.velocity.x, verticalInput * wallSpeed);
-            }
-            Debug.Log("Velocity X: " + rb.velocity.x);
-            yield return new WaitForSeconds(duration);
-        }
-        else
-        {
-            rb.gravityScale = 1;
-        }
+        isBuff = true;
+        buffColor = Color.cyan;
+        sr.color = buffColor;
+        yield return new WaitForSeconds(duration);
+        sr.color = originalColor;
+        isBuff = false;
 
     }
     IEnumerator ApplyBounce(float duration)
