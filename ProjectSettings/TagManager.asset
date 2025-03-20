@@ -8,6 +8,7 @@ TagManager:
   - BuffJump
   - StickBuff
   - Bounce
+  - Thorn
   layers:
   - Default
   - TransparentFX
